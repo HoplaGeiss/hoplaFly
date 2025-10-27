@@ -3,8 +3,5 @@ import { AppComponent } from './app/app.component';
 import { provideZonelessChangeDetection } from '@angular/core';
 
 bootstrapApplication(AppComponent, {
-  providers: [
-    provideZonelessChangeDetection()
-  ]
-})
-  .catch(err => console.error(err));
+  providers: [provideZonelessChangeDetection()],
+}).catch((err) => console.error(err));

@@ -49,18 +49,27 @@ export class Game extends Phaser.Scene {
     this.background2 = this.add.image(this.background1.width, 0, 'background').setOrigin(0);
 
     // Create tutorial text
-    this.tutorialText = this.add.text(this.centreX, this.centreY, 'Tap to fly!', {
-      fontFamily: 'Arial Black', fontSize: 42, color: '#ffffff',
-      stroke: '#000000', strokeThickness: 8,
-      align: 'center'
-    }).setOrigin(0.5);
+    this.tutorialText = this.add
+      .text(this.centreX, this.centreY, 'Tap to fly!', {
+        fontFamily: 'Arial Black',
+        fontSize: 42,
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 8,
+        align: 'center',
+      })
+      .setOrigin(0.5);
 
     // Create score text
-    this.scoreText = this.add.text(this.centreX, 50, 'Score: 0', {
-      fontFamily: 'Arial Black', fontSize: 28, color: '#ffffff',
-      stroke: '#000000', strokeThickness: 8,
-      align: 'center'
-    })
+    this.scoreText = this.add
+      .text(this.centreX, 50, 'Score: 0', {
+        fontFamily: 'Arial Black',
+        fontSize: 28,
+        color: '#ffffff',
+        stroke: '#000000',
+        strokeThickness: 8,
+        align: 'center',
+      })
       .setOrigin(0.5)
       .setDepth(100);
 
@@ -75,11 +84,11 @@ export class Game extends Phaser.Scene {
     this.background2.x -= this.backgroundSpeed;
 
     if (this.background1.x + this.background1.width < 0) {
-      this.background1.x += (this.background1.width * 2);
+      this.background1.x += this.background1.width * 2;
     }
 
     if (this.background2.x + this.background2.width < 0) {
-      this.background2.x += (this.background2.width * 2);
+      this.background2.x += this.background2.width * 2;
     }
 
     if (!this.gameStarted) return;
@@ -103,12 +112,12 @@ export class Game extends Phaser.Scene {
       this.addSpike();
     }
 
-    this.coinGroup.getChildren().forEach(coin => {
+    this.coinGroup.getChildren().forEach((coin) => {
       (coin as Phaser.Physics.Arcade.Sprite).x -= this.backgroundSpeed;
       (coin as Phaser.Physics.Arcade.Sprite).refreshBody();
     }, this);
 
-    this.obstacleGroup.getChildren().forEach(obstacle => {
+    this.obstacleGroup.getChildren().forEach((obstacle) => {
       (obstacle as Phaser.Physics.Arcade.Sprite).x -= this.backgroundSpeed;
       (obstacle as Phaser.Physics.Arcade.Sprite).refreshBody();
     }, this);
@@ -136,13 +145,13 @@ export class Game extends Phaser.Scene {
       key: ANIMATION.bat.key,
       frames: this.anims.generateFrameNumbers(ANIMATION.bat.texture),
       frameRate: ANIMATION.bat.frameRate,
-      repeat: ANIMATION.bat.repeat
+      repeat: ANIMATION.bat.repeat,
     });
     this.anims.create({
       key: ANIMATION.coin.key,
       frames: this.anims.generateFrameNumbers(ANIMATION.coin.texture),
       frameRate: ANIMATION.coin.frameRate,
-      repeat: ANIMATION.coin.repeat
+      repeat: ANIMATION.coin.repeat,
     });
   }
 
@@ -155,7 +164,8 @@ export class Game extends Phaser.Scene {
   }
 
   private initPlayer(): void {
-    this.player = this.physics.add.sprite(200, this.centreY, ASSETS.spritesheet.bat.key)
+    this.player = this.physics.add
+      .sprite(200, this.centreY, ASSETS.spritesheet.bat.key)
       .setDepth(100)
       .setCollideWorldBounds(true);
     this.player.anims.play(ANIMATION.bat.key, true);
@@ -180,14 +190,24 @@ export class Game extends Phaser.Scene {
   }
 
   private addCoin(): void {
-    const coin = this.physics.add.staticSprite(this.scale.width + 50, this.pathY, ASSETS.spritesheet.coin.key);
+    const coin = this.physics.add.staticSprite(
+      this.scale.width + 50,
+      this.pathY,
+      ASSETS.spritesheet.coin.key
+    );
     coin.anims.play(ANIMATION.coin.key, true);
     this.coinGroup.add(coin);
   }
 
   private addSpike(): void {
-    const spikeTop = this.physics.add.staticSprite(this.scale.width + 50, this.pathY - this.pathHeight, 'spikes').setFlipY(true);
-    const spikeBottom = this.physics.add.staticSprite(this.scale.width + 50, this.pathY + this.pathHeight, 'spikes');
+    const spikeTop = this.physics.add
+      .staticSprite(this.scale.width + 50, this.pathY - this.pathHeight, 'spikes')
+      .setFlipY(true);
+    const spikeBottom = this.physics.add.staticSprite(
+      this.scale.width + 50,
+      this.pathY + this.pathHeight,
+      'spikes'
+    );
     this.obstacleGroup.add(spikeTop);
     this.obstacleGroup.add(spikeBottom);
   }
@@ -205,17 +225,17 @@ export class Game extends Phaser.Scene {
       scale: 3,
       alpha: 0,
       duration: 1000,
-      ease: Phaser.Math.Easing.Expo.Out
+      ease: Phaser.Math.Easing.Expo.Out,
     });
 
     this.gameOver();
-  }
+  };
 
   private collectCoin = (player: any, coin: any): void => {
     coin.destroy();
     this.score++;
     this.scoreText.setText(`Score: ${this.score}`);
-  }
+  };
 
   private gameOver(): void {
     this.time.delayedCall(2000, () => {

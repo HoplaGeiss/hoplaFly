@@ -6,16 +6,16 @@ import { Game } from './scenes/game.scene';
 import { GameOver } from './scenes/game-over.scene';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameService {
   private game = signal<Phaser.Game | null>(null);
   private isGameInitialized = signal(false);
-  
+
   // Computed signal for game state
   gameState = computed(() => ({
     game: this.game(),
-    isInitialized: this.isGameInitialized()
+    isInitialized: this.isGameInitialized(),
   }));
 
   initializeGame(): void {
@@ -33,19 +33,14 @@ export class GameService {
         default: 'arcade',
         arcade: {
           debug: false,
-          gravity: { x: 0, y: 400 }
-        }
+          gravity: { x: 0, y: 400 },
+        },
       },
       scale: {
         mode: Phaser.Scale.FIT,
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        autoCenter: Phaser.Scale.CENTER_BOTH,
       },
-      scene: [
-        Boot,
-        Preloader,
-        Game,
-        GameOver
-      ]
+      scene: [Boot, Preloader, Game, GameOver],
     };
 
     const gameInstance = new Phaser.Game(config);
