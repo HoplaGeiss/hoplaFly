@@ -23,7 +23,7 @@ echo "✅ Build successful!"
 
 # Deploy to Netlify
 echo "🌐 Deploying to Netlify..."
-netlify deploy --prod --dir=dist/hoplafly-angular
+netlify deploy --prod --dir=dist/hoplaFly
 
 if [ $? -eq 0 ]; then
     echo "🎉 Deployment successful!"
