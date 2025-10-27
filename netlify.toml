@@ -1,6 +1,6 @@
 [build]
   publish = "dist/hoplaFly"
-  command = "npm run build"
+  command = "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install && pnpm run build"
 
 [build.environment]
   NODE_VERSION = "20"
