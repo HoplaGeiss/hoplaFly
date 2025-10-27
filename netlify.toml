@@ -12,6 +12,7 @@
   status = 200
 
 [dev]
-  command = "npm start"
-  port = 4200
+  command = "ng serve"
+  port = 8888
+  functions = "netlify/functions"
   publish = "dist/hoplaFly"

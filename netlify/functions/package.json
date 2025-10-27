@@ -1,9 +1,0 @@
-{
-  "name": "hopla-fly-functions",
-  "version": "1.0.0",
-  "description": "Netlify Functions for hoplaFly game",
-  "main": "index.js",
-  "dependencies": {
-    "mongodb": "^6.3.0"
-  }
-}
