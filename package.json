@@ -9,7 +9,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}\""
   },
   "dependencies": {
     "@angular/animations": "^20.0.0",
@@ -28,7 +28,7 @@
     "@angular-devkit/build-angular": "^20.0.0",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^20.19.0",
     "prettier": "^3.6.2",
     "typescript": "~5.8.0"
   },
