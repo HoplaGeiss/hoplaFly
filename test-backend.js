@@ -15,7 +15,7 @@ async function testSaveUserData() {
   console.log('1. Testing save user data...');
 
   try {
-    const response = await fetch('http://localhost:9999/.netlify/functions/save-user-data-simple', {
+    const response = await fetch('http://localhost:9999/.netlify/functions/save-user-data', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ async function testGetUserData() {
   console.log('\n2. Testing get user data...');
 
   try {
-    const response = await fetch(`http://localhost:9999/.netlify/functions/get-user-data-simple?deviceId=${encodeURIComponent(testDeviceId)}`);
+    const response = await fetch(`http://localhost:9999/.netlify/functions/get-user-data?deviceId=${encodeURIComponent(testDeviceId)}`);
     const result = await response.json();
 
     if (response.ok && result.success) {
@@ -64,7 +64,7 @@ async function testInvalidData() {
   console.log('\n3. Testing invalid data handling...');
 
   try {
-    const response = await fetch('http://localhost:9999/.netlify/functions/save-user-data-simple', {
+    const response = await fetch('http://localhost:9999/.netlify/functions/save-user-data', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

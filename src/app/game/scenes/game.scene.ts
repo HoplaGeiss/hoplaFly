@@ -281,7 +281,7 @@ export class Game extends Phaser.Scene {
     this.scoreText.setText(`Score: ${this.score}`);
 
     // Check for win condition
-    if (this.score >= 20) {
+    if (this.score >= 5) {
       this.gameWon();
     }
   };

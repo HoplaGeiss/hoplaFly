@@ -44,7 +44,7 @@ export class ApiService {
    * Save user data to the backend
    */
   saveUserData(userData: SaveUserDataRequest): Observable<ApiResponse<UserData>> {
-    return this.http.post<ApiResponse<UserData>>(`${this.baseUrl}/save-user-data-simple`, userData)
+    return this.http.post<ApiResponse<UserData>>(`${this.baseUrl}/save-user-data`, userData)
       .pipe(
         tap(response => {
           // User data saved
@@ -57,7 +57,7 @@ export class ApiService {
    * Get user data from the backend
    */
   getUserData(deviceId: string): Observable<ApiResponse<UserData>> {
-    return this.http.get<ApiResponse<UserData>>(`${this.baseUrl}/get-user-data-simple?deviceId=${encodeURIComponent(deviceId)}`)
+    return this.http.get<ApiResponse<UserData>>(`${this.baseUrl}/get-user-data?deviceId=${encodeURIComponent(deviceId)}`)
       .pipe(
         tap(response => {
           // User data retrieved

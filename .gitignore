@@ -12,6 +12,7 @@
 
 # Dependencies
 /node_modules
+/netlify/functions/node_modules
 
 # IDEs and editors
 /.idea
@@ -51,4 +52,3 @@ Thumbs.db
 
 # Netlify
 .netlify
-netlify/functions/user-data.json
