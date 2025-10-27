@@ -4,6 +4,7 @@ import { Boot } from './scenes/boot.scene';
 import { Preloader } from './scenes/preloader.scene';
 import { Game } from './scenes/game.scene';
 import { GameOver } from './scenes/game-over.scene';
+import { Win } from './scenes/win.scene';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +41,7 @@ export class GameService {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
       },
-      scene: [Boot, Preloader, Game, GameOver],
+      scene: [Boot, Preloader, Game, GameOver, Win],
     };
 
     const gameInstance = new Phaser.Game(config);

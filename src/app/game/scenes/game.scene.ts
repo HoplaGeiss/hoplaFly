@@ -235,7 +235,31 @@ export class Game extends Phaser.Scene {
     coin.destroy();
     this.score++;
     this.scoreText.setText(`Score: ${this.score}`);
+
+    // Check for win condition
+    if (this.score >= 5) {
+      this.gameWon();
+    }
   };
+
+  private gameWon(): void {
+    this.gameStarted = false;
+    this.physics.pause();
+
+    // Add a celebration effect
+    this.tweens.add({
+      targets: this.player,
+      scale: 1.5,
+      duration: 500,
+      ease: Phaser.Math.Easing.Bounce.Out,
+      yoyo: true,
+      repeat: 2,
+    });
+
+    this.time.delayedCall(2000, () => {
+      this.scene.start('Win');
+    });
+  }
 
   private gameOver(): void {
     this.time.delayedCall(2000, () => {
