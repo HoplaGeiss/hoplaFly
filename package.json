@@ -7,7 +7,7 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "concurrently \"netlify functions:serve\" \"ng serve\"",
     "build": "ng build",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}\""
   },
@@ -29,6 +29,7 @@
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
     "@types/node": "^20.19.0",
+    "concurrently": "^9.2.1",
     "prettier": "^3.6.2",
     "typescript": "~5.8.0"
   },

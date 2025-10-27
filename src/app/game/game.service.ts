@@ -1,15 +1,17 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import * as Phaser from 'phaser';
 import { Boot } from './scenes/boot.scene';
 import { Preloader } from './scenes/preloader.scene';
 import { Game } from './scenes/game.scene';
 import { GameOver } from './scenes/game-over.scene';
 import { Win } from './scenes/win.scene';
+import { UserService } from '../services/user.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameService {
+  private userService = inject(UserService);
   private game = signal<Phaser.Game | null>(null);
   private isGameInitialized = signal(false);
 
@@ -45,6 +47,10 @@ export class GameService {
     };
 
     const gameInstance = new Phaser.Game(config);
+
+    // Store the UserService in the game registry so scenes can access it
+    gameInstance.registry.set('userService', this.userService);
+
     this.game.set(gameInstance);
     this.isGameInitialized.set(true);
   }

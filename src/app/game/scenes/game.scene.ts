@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { ASSETS } from '../config/assets.config';
 import { ANIMATION } from '../config/animation.config';
+import { UserService } from '../../services/user.service';
 
 export class Game extends Phaser.Scene {
   private centreX: number = 0;
@@ -30,12 +31,18 @@ export class Game extends Phaser.Scene {
   private background2!: Phaser.GameObjects.Image;
   private tutorialText!: Phaser.GameObjects.Text;
   private scoreText!: Phaser.GameObjects.Text;
+  private balanceText!: Phaser.GameObjects.Text;
   private player!: Phaser.Physics.Arcade.Sprite;
   private obstacleGroup!: Phaser.GameObjects.Group;
   private coinGroup!: Phaser.GameObjects.Group;
+  private userService!: UserService;
 
   constructor() {
     super('Game');
+  }
+
+  init(data: { userService: UserService }): void {
+    this.userService = data.userService;
   }
 
   create(): void {
@@ -73,10 +80,27 @@ export class Game extends Phaser.Scene {
       .setOrigin(0.5)
       .setDepth(100);
 
+    // Create balance text
+    const currentBalance = this.userService?.getHoplaTokens() || 0;
+    this.balanceText = this.add
+      .text(this.centreX, 90, `hoplaTokens: ${currentBalance}`, {
+        fontFamily: 'Arial Black',
+        fontSize: 24,
+        color: '#FFD700',
+        stroke: '#000000',
+        strokeThickness: 6,
+        align: 'center',
+      })
+      .setOrigin(0.5)
+      .setDepth(100);
+
     this.initAnimations();
     this.initPlayer();
     this.initInput();
     this.initPhysics();
+
+    // Reset game state after everything is initialized
+    this.resetGameState();
   }
 
   override update(): void {
@@ -246,6 +270,9 @@ export class Game extends Phaser.Scene {
     this.gameStarted = false;
     this.physics.pause();
 
+    // Add hoplaToken reward with score
+    this.userService.addHoplaTokens(1, this.score);
+
     // Add a celebration effect
     this.tweens.add({
       targets: this.player,
@@ -257,13 +284,58 @@ export class Game extends Phaser.Scene {
     });
 
     this.time.delayedCall(2000, () => {
-      this.scene.start('Win');
+      this.scene.start('Win', { userService: this.userService });
     });
   }
 
+  private resetGameState(): void {
+    // Reset score and game state
+    this.score = 0;
+    this.gameStarted = false;
+    this.distance = 0;
+    this.coinDistance = 0;
+    this.spikeDistance = 0;
+
+    // Pause physics initially
+    this.physics.pause();
+
+    // Clear existing groups
+    if (this.obstacleGroup) {
+      this.obstacleGroup.clear(true, true);
+    }
+    if (this.coinGroup) {
+      this.coinGroup.clear(true, true);
+    }
+
+    // Reset player position and state
+    if (this.player) {
+      this.player.setPosition(200, this.centreY);
+      this.player.setScale(1);
+      this.player.setAlpha(1);
+      this.player.setVelocity(0, 0);
+    }
+
+    // Reset tutorial text visibility
+    if (this.tutorialText) {
+      this.tutorialText.setVisible(true);
+    }
+
+    // Reset score display
+    if (this.scoreText) {
+      this.scoreText.setText('Score: 0');
+    }
+
+    // Reset input handling
+    this.input.removeAllListeners();
+    this.input.once('pointerdown', () => {
+      this.startGame();
+    });
+
+  }
+
   private gameOver(): void {
-    this.time.delayedCall(2000, () => {
-      this.scene.start('GameOver');
+    this.time.delayedCall(1000, () => {
+      this.scene.start('GameOver', { userService: this.userService });
     });
   }
 }
