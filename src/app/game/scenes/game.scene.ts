@@ -255,6 +255,7 @@ export class Game extends Phaser.Scene {
     this.obstacleGroup.add(spikeBottom);
   }
 
+
   private fly(): void {
     this.player.setVelocityY(this.flyVelocity);
   }
@@ -280,7 +281,7 @@ export class Game extends Phaser.Scene {
     this.scoreText.setText(`Score: ${this.score}`);
 
     // Check for win condition
-    if (this.score >= 5) {
+    if (this.score >= 20) {
       this.gameWon();
     }
   };
@@ -341,7 +342,7 @@ export class Game extends Phaser.Scene {
       this.balanceText.setPosition(this.centreX, 90);
     }
     if (this.player) {
-      this.player.setPosition(200, this.centreY);
+      this.player.setPosition(this.centreX, this.centreY);
     }
   }
 
@@ -366,7 +367,7 @@ export class Game extends Phaser.Scene {
 
     // Reset player position and state
     if (this.player) {
-      this.player.setPosition(200, this.centreY);
+      this.player.setPosition(this.centreX, this.centreY);
       this.player.setScale(1);
       this.player.setAlpha(1);
       this.player.setVelocity(0, 0);
