@@ -28,8 +28,8 @@ export class GameService {
 
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
-      width: 800,
-      height: 600,
+      width: window.innerWidth,
+      height: window.innerHeight,
       parent: 'game-container',
       backgroundColor: '#028af8',
       physics: {
@@ -40,8 +40,10 @@ export class GameService {
         },
       },
       scale: {
-        mode: Phaser.Scale.FIT,
+        mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: '100%',
+        height: '100%',
       },
       scene: [Boot, Preloader, Game, GameOver, Win],
     };

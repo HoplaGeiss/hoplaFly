@@ -7,12 +7,21 @@ import { GameService } from './game/game.service';
   template: ` <div id="game-container"></div> `,
   styles: [
     `
-      #game-container {
-        width: 100%;
+      :host {
+        display: block;
+        width: 100vw;
         height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+      
+      #game-container {
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
       }
     `,
   ],

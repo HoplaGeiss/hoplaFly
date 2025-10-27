@@ -15,6 +15,12 @@ export class GameOver extends Phaser.Scene {
 
   create(): void {
     this.background1 = this.add.image(0, 0, 'background').setOrigin(0);
+    
+    // Scale background to cover full screen
+    this.background1.setScale(
+      this.scale.width / this.background1.width,
+      this.scale.height / this.background1.height
+    );
 
     const currentBalance = this.userService?.getHoplaTokens() || 0;
 

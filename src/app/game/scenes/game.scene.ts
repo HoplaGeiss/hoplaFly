@@ -50,10 +50,29 @@ export class Game extends Phaser.Scene {
     this.centreY = this.scale.height * 0.5;
     this.pathHeight = this.pathHeightMax;
 
-    this.cameras.main.setBackgroundColor(0x00ff00);
+    // Handle window resize
+    this.scale.on('resize', this.handleResize, this);
+
+    this.cameras.main.setBackgroundColor(0x040218);
 
     this.background1 = this.add.image(0, 0, 'background').setOrigin(0);
-    this.background2 = this.add.image(this.background1.width, 0, 'background').setOrigin(0);
+    this.background2 = this.add.image(0, 0, 'background').setOrigin(0);
+
+    // Scale backgrounds to cover full screen
+    const scaleX = this.scale.width / this.background1.width;
+    const scaleY = this.scale.height / this.background1.height;
+    const scale = Math.max(scaleX, scaleY);
+
+    this.background1.setScale(scale);
+    this.background2.setScale(scale);
+
+    // Position second background right after the first one
+    this.background2.x = this.background1.displayWidth;
+
+    // Center the backgrounds if they're larger than the screen
+    const offsetX = (this.background1.displayWidth - this.scale.width) / 2;
+    this.background1.x = -offsetX;
+    this.background2.x = this.background1.displayWidth - offsetX;
 
     // Create tutorial text
     this.tutorialText = this.add
@@ -107,12 +126,12 @@ export class Game extends Phaser.Scene {
     this.background1.x -= this.backgroundSpeed;
     this.background2.x -= this.backgroundSpeed;
 
-    if (this.background1.x + this.background1.width < 0) {
-      this.background1.x += this.background1.width * 2;
+    if (this.background1.x + this.background1.displayWidth < 0) {
+      this.background1.x += this.background1.displayWidth * 2;
     }
 
-    if (this.background2.x + this.background2.width < 0) {
-      this.background2.x += this.background2.width * 2;
+    if (this.background2.x + this.background2.displayWidth < 0) {
+      this.background2.x += this.background2.displayWidth * 2;
     }
 
     if (!this.gameStarted) return;
@@ -286,6 +305,44 @@ export class Game extends Phaser.Scene {
     this.time.delayedCall(2000, () => {
       this.scene.start('Win', { userService: this.userService });
     });
+  }
+
+  private handleResize(gameSize: Phaser.Structs.Size): void {
+    // Update center positions when screen resizes
+    this.centreX = gameSize.width * 0.5;
+    this.centreY = gameSize.height * 0.5;
+
+    // Rescale backgrounds to cover full screen
+    if (this.background1 && this.background2) {
+      const scaleX = gameSize.width / this.background1.width;
+      const scaleY = gameSize.height / this.background1.height;
+      const scale = Math.max(scaleX, scaleY);
+
+      this.background1.setScale(scale);
+      this.background2.setScale(scale);
+
+      // Position second background right after the first one
+      this.background2.x = this.background1.displayWidth;
+
+      // Center the backgrounds if they're larger than the screen
+      const offsetX = (this.background1.displayWidth - gameSize.width) / 2;
+      this.background1.x = -offsetX;
+      this.background2.x = this.background1.displayWidth - offsetX;
+    }
+
+    // Update UI elements positions
+    if (this.tutorialText) {
+      this.tutorialText.setPosition(this.centreX, this.centreY);
+    }
+    if (this.scoreText) {
+      this.scoreText.setPosition(this.centreX, 50);
+    }
+    if (this.balanceText) {
+      this.balanceText.setPosition(this.centreX, 90);
+    }
+    if (this.player) {
+      this.player.setPosition(200, this.centreY);
+    }
   }
 
   private resetGameState(): void {
