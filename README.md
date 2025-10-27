@@ -26,30 +26,29 @@ A fun flying game built with Angular and Phaser.js where you control a bat and c
 
 ### Deploy Options
 
-#### Option 1: Quick Deploy (Recommended)
-```bash
-npm run deploy
-```
+#### Git-based Deployment (Recommended)
+1. Push your code to your connected Git repository:
+   ```bash
+   git add .
+   git commit -m "Your commit message"
+   git push origin main
+   ```
+2. Netlify automatically builds and deploys on every push
 
-#### Option 2: Manual Deploy
+#### Manual Deploy (Optional)
 ```bash
 # Build the project
 npm run build
 
 # Deploy to Netlify
-netlify deploy --prod --dir=dist/hoplafly-angular
+netlify deploy --prod --dir=dist/hoplaFly
 ```
-
-#### Option 3: Connect to Git Repository
-1. Push your code to a Git repository (GitHub, GitLab, etc.)
-2. Connect your repository to Netlify
-3. Netlify will automatically build and deploy on every push
 
 ### Configuration
 
 The project includes a `netlify.toml` file with the following configuration:
 - **Build command**: `npm run build`
-- **Publish directory**: `dist/hoplafly-angular`
+- **Publish directory**: `dist/hoplaFly`
 - **Node version**: 18
 - **Redirects**: All routes redirect to `index.html` for SPA support
 
