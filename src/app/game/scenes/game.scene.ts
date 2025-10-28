@@ -2,7 +2,6 @@ import * as Phaser from 'phaser';
 import { ASSETS } from '../config/assets.config';
 import { ANIMATION } from '../config/animation.config';
 import { UserService } from '../../services/user.service';
-
 export class Game extends Phaser.Scene {
   private centreX: number = 0;
   private centreY: number = 0;
@@ -41,11 +40,11 @@ export class Game extends Phaser.Scene {
     super('Game');
   }
 
-  init(data: { userService: UserService }): void {
-    this.userService = data.userService;
-  }
 
   create(): void {
+    // Get UserService from the game registry
+    this.userService = this.registry.get('userService');
+
     this.centreX = this.scale.width * 0.5;
     this.centreY = this.scale.height * 0.5;
     this.pathHeight = this.pathHeightMax;
@@ -120,11 +119,23 @@ export class Game extends Phaser.Scene {
 
     // Reset game state after everything is initialized
     this.resetGameState();
+
+    // Update balance display with current data
+    this.updateBalanceDisplay();
   }
 
   override update(): void {
     this.background1.x -= this.backgroundSpeed;
     this.background2.x -= this.backgroundSpeed;
+
+    // Check if UserService is now initialized and update balance if needed
+    if (this.userService && this.userService.isUserInitialized() && this.balanceText) {
+      const currentBalance = this.userService.getHoplaTokens();
+      const displayedBalance = this.balanceText.text.match(/hoplaTokens: (\d+)/)?.[1];
+      if (displayedBalance !== currentBalance.toString()) {
+        this.updateBalanceDisplay();
+      }
+    }
 
     if (this.background1.x + this.background1.displayWidth < 0) {
       this.background1.x += this.background1.displayWidth * 2;
@@ -293,6 +304,9 @@ export class Game extends Phaser.Scene {
     // Add hoplaToken reward with score
     this.userService.addHoplaTokens(1, this.score);
 
+    // Update balance display after adding tokens
+    this.updateBalanceDisplay();
+
     // Add a celebration effect
     this.tweens.add({
       targets: this.player,
@@ -304,9 +318,17 @@ export class Game extends Phaser.Scene {
     });
 
     this.time.delayedCall(2000, () => {
-      this.scene.start('Win', { userService: this.userService });
+      this.scene.start('Win');
     });
   }
+
+  private updateBalanceDisplay(): void {
+    if (this.balanceText && this.userService) {
+      const currentBalance = this.userService.getHoplaTokens();
+      this.balanceText.setText(`hoplaTokens: ${currentBalance}`);
+    }
+  }
+
 
   private handleResize(gameSize: Phaser.Structs.Size): void {
     // Update center positions when screen resizes
@@ -393,7 +415,7 @@ export class Game extends Phaser.Scene {
 
   private gameOver(): void {
     this.time.delayedCall(1000, () => {
-      this.scene.start('GameOver', { userService: this.userService });
+      this.scene.start('GameOver');
     });
   }
 }

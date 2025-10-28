@@ -9,13 +9,13 @@ export class GameOver extends Phaser.Scene {
     super('GameOver');
   }
 
-  init(data: { userService: UserService }): void {
-    this.userService = data.userService;
-  }
 
   create(): void {
+    // Get UserService from the game registry
+    this.userService = this.registry.get('userService');
+
     this.background1 = this.add.image(0, 0, 'background').setOrigin(0);
-    
+
     // Scale background to cover full screen
     this.background1.setScale(
       this.scale.width / this.background1.width,
@@ -61,7 +61,7 @@ export class GameOver extends Phaser.Scene {
 
     // Add input to restart the game
     this.input.once('pointerdown', () => {
-      this.scene.start('Game', { userService: this.userService });
+      this.scene.start('Game');
     });
   }
 }
