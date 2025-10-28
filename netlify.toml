@@ -1,6 +1,6 @@
 [build]
   publish = "dist/hoplaFly"
-  command = "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install && pnpm run build"
+  command = "pnpm install && pnpm run build"
   functions = "netlify/functions"
 
 [functions]
