@@ -2,9 +2,15 @@
   "name": "save-user-data",
   "version": "1.0.0",
   "description": "Netlify function to save user data to MongoDB",
-  "main": "save-user-data.js",
+  "type": "module",
+  "main": "save-user-data.mjs",
   "dependencies": {
     "mongodb": "^6.3.0"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^5.0.1",
+    "@types/node": "^20.19.0",
+    "typescript": "~5.8.0"
   },
   "engines": {
     "node": ">=20.19.0"

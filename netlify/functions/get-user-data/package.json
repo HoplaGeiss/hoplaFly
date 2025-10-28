@@ -2,9 +2,15 @@
   "name": "get-user-data",
   "version": "1.0.0",
   "description": "Netlify function to get user data from MongoDB",
-  "main": "get-user-data.js",
+  "type": "module",
+  "main": "get-user-data.mjs",
   "dependencies": {
     "mongodb": "^6.3.0"
+  },
+  "devDependencies": {
+    "@netlify/functions": "^5.0.1",
+    "@types/node": "^20.19.0",
+    "typescript": "~5.8.0"
   },
   "engines": {
     "node": ">=20.19.0"
