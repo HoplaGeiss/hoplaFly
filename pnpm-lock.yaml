@@ -32,18 +32,30 @@ importers:
       '@angular/router':
         specifier: ^20.0.0
         version: 20.3.7(@angular/common@20.3.7(@angular/core@20.3.7(@angular/compiler@20.3.7)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.7(@angular/compiler@20.3.7)(rxjs@7.8.2))(@angular/platform-browser@20.3.7(@angular/animations@20.3.7(@angular/core@20.3.7(@angular/compiler@20.3.7)(rxjs@7.8.2)))(@angular/common@20.3.7(@angular/core@20.3.7(@angular/compiler@20.3.7)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.7(@angular/compiler@20.3.7)(rxjs@7.8.2)))(rxjs@7.8.2)
+      '@mongodb-js/saslprep':
+        specifier: ^1.3.2
+        version: 1.3.2
       bson:
         specifier: ^6.10.4
         version: 6.10.4
+      memory-pager:
+        specifier: ^1.5.0
+        version: 1.5.0
       mongodb:
         specifier: ^6.3.0
         version: 6.20.0(@mongodb-js/zstd@2.0.1)(kerberos@2.2.2)(socks@2.8.7)
+      mongodb-connection-string-url:
+        specifier: ^3.0.2
+        version: 3.0.2
       phaser:
         specifier: ^3.88.2
         version: 3.90.0
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
+      sparse-bitfield:
+        specifier: ^3.0.3
+        version: 3.0.3
       tslib:
         specifier: ^2.8.1
         version: 2.8.1

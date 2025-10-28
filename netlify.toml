@@ -6,7 +6,11 @@
 [functions]
 external_node_modules = [
   "mongodb",
-  "bson"
+  "bson",
+  "@mongodb-js/saslprep",
+  "mongodb-connection-string-url",
+  "sparse-bitfield",
+  "memory-pager"
 ]
 
 [build.environment]
