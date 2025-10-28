@@ -6,15 +6,7 @@
 [functions]
 external_node_modules = [
   "mongodb",
-  "bson",
-  "@mongodb-js/saslprep",
-  "@mongodb-js/zstd",
-  "kerberos",
-  "memory-pager",
-  "mongodb-connection-string-url",
-  "sparse-bitfield",
-  "whatwg-url",
-  "tr46"
+  "bson"
 ]
 
 [build.environment]
