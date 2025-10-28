@@ -147,6 +147,12 @@ export class Game extends Phaser.Scene {
 
     if (!this.gameStarted) return;
 
+    // Check if player hits the bottom or top of the screen
+    if (this.player && (this.player.y > this.scale.height || this.player.y < 0)) {
+      this.gameOver();
+      return;
+    }
+
     this.distance += this.backgroundSpeed;
     this.coinDistance += this.backgroundSpeed;
     this.spikeDistance += this.backgroundSpeed;
