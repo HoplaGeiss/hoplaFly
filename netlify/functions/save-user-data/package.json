@@ -1,0 +1,12 @@
+{
+  "name": "save-user-data",
+  "version": "1.0.0",
+  "description": "Netlify function to save user data to MongoDB",
+  "main": "save-user-data.js",
+  "dependencies": {
+    "mongodb": "^6.3.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

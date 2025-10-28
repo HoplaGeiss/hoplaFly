@@ -4,15 +4,7 @@
   functions = "netlify/functions"
 
 [functions]
-external_node_modules = [
-  "mongodb",
-  "bson",
-  "@mongodb-js/saslprep",
-  "mongodb-connection-string-url",
-  "sparse-bitfield",
-  "memory-pager",
-  "whatwg-url"
-]
+node_bundler = "none"
 
 [build.environment]
   NODE_VERSION = "20"
