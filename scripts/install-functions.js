@@ -8,6 +8,6 @@ for (const dir of readdirSync(functionsDir)) {
   const full = path.join(functionsDir, dir);
   if (statSync(full).isDirectory()) {
     console.log(`🧩 Installing dependencies in ${dir}...`);
-    execSync("pnpm install --prod", { cwd: full, stdio: "inherit" });
+    execSync("pnpm install", { cwd: full, stdio: "inherit" });
   }
 }
