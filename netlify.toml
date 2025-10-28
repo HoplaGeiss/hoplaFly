@@ -1,6 +1,6 @@
 [build]
   publish = "dist/hoplaFly"
-  command = "pnpm install && pnpm run build"
+  command = "pnpm run build"
   functions = "netlify/functions"
 
 [functions]
