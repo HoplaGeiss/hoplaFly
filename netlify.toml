@@ -10,7 +10,8 @@ external_node_modules = [
   "@mongodb-js/saslprep",
   "mongodb-connection-string-url",
   "sparse-bitfield",
-  "memory-pager"
+  "memory-pager",
+  "whatwg-url"
 ]
 
 [build.environment]
