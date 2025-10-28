@@ -1,36 +1,13 @@
 import { MongoClient } from 'mongodb';
-import type { Context } from '@netlify/functions';
 
-// MongoDB connection string - you'll need to replace this with your actual MongoDB URI
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/hoplaFly';
+const MONGODB_URI = process.env['MONGODB_URI'];
 const DB_NAME = 'hoplaFly';
 const COLLECTION_NAME = 'users';
 
-interface User {
-  deviceId: string;
-  hoplaTokens: number;
-  lastUpdated?: Date;
-}
+let cachedClient = null;
+let cachedDb = null;
 
-interface SaveUserRequest {
-  deviceId: string;
-  hoplaTokens: number;
-}
-
-interface ApiResponse {
-  success: boolean;
-  message?: string;
-  data?: {
-    deviceId: string;
-    hoplaTokens: number;
-  };
-  error?: string;
-}
-
-let cachedClient: MongoClient | null = null;
-let cachedDb: any = null;
-
-async function connectToDatabase(): Promise<{ client: MongoClient; db: any }> {
+async function connectToDatabase() {
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };
   }
@@ -50,7 +27,7 @@ async function connectToDatabase(): Promise<{ client: MongoClient; db: any }> {
   }
 }
 
-export default async (req: Request, context: Context): Promise<Response> => {
+export default async (req, context) => {
   // Enable CORS
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -67,7 +44,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
   }
 
   if (req.method !== 'POST') {
-    const response: ApiResponse = { success: false, error: 'Method not allowed' };
+    const response = { success: false, error: 'Method not allowed' };
     return new Response(JSON.stringify(response), {
       status: 405,
       headers: {
@@ -78,11 +55,11 @@ export default async (req: Request, context: Context): Promise<Response> => {
   }
 
   try {
-    const body: SaveUserRequest = await req.json();
+    const body = await req.json();
     const { deviceId, hoplaTokens } = body;
 
     if (!deviceId || hoplaTokens === undefined) {
-      const response: ApiResponse = {
+      const response = {
         success: false,
         error: 'Missing required fields: deviceId and hoplaTokens'
       };
@@ -96,7 +73,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
     }
 
     const { db } = await connectToDatabase();
-    const collection = db.collection<User>(COLLECTION_NAME);
+    const collection = db.collection(COLLECTION_NAME);
 
     // Upsert user data
     const result = await collection.updateOne(
@@ -111,7 +88,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
       { upsert: true }
     );
 
-    const response: ApiResponse = {
+    const response = {
       success: true,
       message: 'User data saved successfully',
       data: { deviceId, hoplaTokens }
@@ -127,7 +104,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
 
   } catch (error) {
     console.error('Error saving user data:', error);
-    const response: ApiResponse = {
+    const response = {
       success: false,
       error: 'Internal server error'
     };

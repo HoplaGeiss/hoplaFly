@@ -7,7 +7,6 @@
   },
   "scripts": {
     "ng": "ng",
-    "start": "concurrently \"netlify functions:serve\" \"ng serve\"",
     "build": "ng build",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss,html,md}\""
   },

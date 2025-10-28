@@ -1,30 +1,13 @@
 import { MongoClient } from 'mongodb';
-import type { Context } from '@netlify/functions';
 
-// MongoDB connection string - you'll need to replace this with your actual MongoDB URI
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/hoplaFly';
+const MONGODB_URI = process.env['MONGODB_URI'];
 const DB_NAME = 'hoplaFly';
 const COLLECTION_NAME = 'users';
 
-interface User {
-  deviceId: string;
-  hoplaTokens: number;
-  lastUpdated?: Date;
-}
+let cachedClient = null;
+let cachedDb = null;
 
-interface ApiResponse {
-  success: boolean;
-  data?: {
-    deviceId: string;
-    hoplaTokens: number;
-  };
-  error?: string;
-}
-
-let cachedClient: MongoClient | null = null;
-let cachedDb: any = null;
-
-async function connectToDatabase(): Promise<{ client: MongoClient; db: any }> {
+async function connectToDatabase() {
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };
   }
@@ -44,7 +27,7 @@ async function connectToDatabase(): Promise<{ client: MongoClient; db: any }> {
   }
 }
 
-export default async (req: Request, context: Context): Promise<Response> => {
+export default async (req, context) => {
   // Enable CORS
   const headers = {
     'Access-Control-Allow-Origin': '*',
@@ -61,7 +44,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
   }
 
   if (req.method !== 'GET') {
-    const response: ApiResponse = { success: false, error: 'Method not allowed' };
+    const response = { success: false, error: 'Method not allowed' };
     return new Response(JSON.stringify(response), {
       status: 405,
       headers: {
@@ -76,7 +59,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
     const deviceId = url.searchParams.get('deviceId');
 
     if (!deviceId) {
-      const response: ApiResponse = {
+      const response = {
         success: false,
         error: 'Missing required parameter: deviceId'
       };
@@ -90,13 +73,13 @@ export default async (req: Request, context: Context): Promise<Response> => {
     }
 
     const { db } = await connectToDatabase();
-    const collection = db.collection<User>(COLLECTION_NAME);
+    const collection = db.collection(COLLECTION_NAME);
 
     // Find user by deviceId
     const user = await collection.findOne({ deviceId });
 
     if (!user) {
-      const response: ApiResponse = {
+      const response = {
         success: false,
         error: 'User not found'
       };
@@ -109,7 +92,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
       });
     }
 
-    const response: ApiResponse = {
+    const response = {
       success: true,
       data: {
         deviceId: user.deviceId,
@@ -127,7 +110,7 @@ export default async (req: Request, context: Context): Promise<Response> => {
 
   } catch (error) {
     console.error('Error getting user data:', error);
-    const response: ApiResponse = {
+    const response = {
       success: false,
       error: 'Internal server error'
     };
