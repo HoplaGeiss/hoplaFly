@@ -1,10 +1,15 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import * as Phaser from 'phaser';
-import { Boot } from './scenes/boot.scene';
-import { Preloader } from './scenes/preloader.scene';
-import { Game } from './scenes/game.scene';
-import { GameOver } from './scenes/game-over.scene';
-import { Win } from './scenes/win.scene';
+import { Boot } from './bat-fly/scenes/boot.scene';
+import { Preloader } from './bat-fly/scenes/preloader.scene';
+import { Game } from './bat-fly/scenes/game.scene';
+import { GameOver } from './bat-fly/scenes/game-over.scene';
+import { Win } from './bat-fly/scenes/win.scene';
+import { MainMenu } from './main-menu/main-menu.scene';
+import { TDPreloader } from './tower-defense/scenes/td-preloader.scene';
+import { TDGame } from './tower-defense/scenes/td-game.scene';
+import { TDGameOver } from './tower-defense/scenes/td-game-over.scene';
+import { TDWin } from './tower-defense/scenes/td-win.scene';
 import { UserService } from '../services/user.service';
 
 @Injectable({
@@ -45,7 +50,12 @@ export class GameService {
         width: '100%',
         height: '100%',
       },
-      scene: [Boot, Preloader, Game, GameOver, Win],
+      scene: [Boot, MainMenu,
+              // Bat Fly scenes
+              Preloader, Game, GameOver, Win,
+              // Tower Defense scenes
+              TDPreloader, TDGame, TDGameOver, TDWin
+      ],
     };
 
     const gameInstance = new Phaser.Game(config);

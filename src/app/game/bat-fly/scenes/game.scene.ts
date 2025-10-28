@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
-import { ASSETS } from '../config/assets.config';
-import { ANIMATION } from '../config/animation.config';
-import { UserService } from '../../services/user.service';
+import { ASSETS } from '../../config/assets.config';
+import { ANIMATION } from '../../config/animation.config';
+import { UserService } from '../../../services/user.service';
 export class Game extends Phaser.Scene {
   private centreX: number = 0;
   private centreY: number = 0;

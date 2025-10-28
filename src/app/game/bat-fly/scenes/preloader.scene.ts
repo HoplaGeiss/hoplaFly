@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { ASSETS } from '../config/assets.config';
+import { ASSETS } from '../../config/assets.config';
 
 export class Preloader extends Phaser.Scene {
   constructor() {

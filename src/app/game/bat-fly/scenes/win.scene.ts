@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../../services/user.service';
 
 export class Win extends Phaser.Scene {
   private background1!: Phaser.GameObjects.Image;
@@ -71,13 +71,30 @@ export class Win extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    // Add input to restart the game
-    this.input.once('pointerdown', () => {
+    // Play Again button
+    const playAgainButton = this.add.text(this.scale.width / 2, this.scale.height - 120, 'Play Again', {
+      fontFamily: 'Arial',
+      fontSize: 20,
+      color: '#ffffff',
+      backgroundColor: '#0066ff',
+      padding: { x: 15, y: 8 },
+      align: 'center'
+    }).setOrigin(0.5).setInteractive();
+
+    playAgainButton.on('pointerdown', () => {
       this.scene.start('Game');
     });
 
+    playAgainButton.on('pointerover', () => {
+      playAgainButton.setBackgroundColor('#0088ff');
+    });
+
+    playAgainButton.on('pointerout', () => {
+      playAgainButton.setBackgroundColor('#0066ff');
+    });
+
     // Back to Menu button
-    const menuButton = this.add.text(this.scale.width / 2, this.scale.height - 100, 'Back to Menu', {
+    const menuButton = this.add.text(this.scale.width / 2, this.scale.height - 80, 'Back to Menu', {
       fontFamily: 'Arial',
       fontSize: 20,
       color: '#ffffff',

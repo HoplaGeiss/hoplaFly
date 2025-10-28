@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { UserService } from '../../services/user.service';
+import { UserService } from '../../../services/user.service';
 
 export class GameOver extends Phaser.Scene {
   private background1!: Phaser.GameObjects.Image;
@@ -59,9 +59,50 @@ export class GameOver extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    // Add input to restart the game
-    this.input.once('pointerdown', () => {
+    // Play Again button
+    const playAgainButton = this.add.text(this.scale.width / 2, this.scale.height - 120, 'Play Again', {
+      fontFamily: 'Arial',
+      fontSize: 20,
+      color: '#ffffff',
+      backgroundColor: '#0066ff',
+      padding: { x: 15, y: 8 },
+      align: 'center'
+    }).setOrigin(0.5).setInteractive();
+
+    playAgainButton.on('pointerdown', () => {
       this.scene.start('Game');
+    });
+
+    playAgainButton.on('pointerover', () => {
+      playAgainButton.setBackgroundColor('#0088ff');
+    });
+
+    playAgainButton.on('pointerout', () => {
+      playAgainButton.setBackgroundColor('#0066ff');
+    });
+
+    // Back to Menu button
+    const menuButton = this.add.text(this.scale.width / 2, this.scale.height - 80, 'Back to Menu', {
+      fontFamily: 'Arial',
+      fontSize: 20,
+      color: '#ffffff',
+      backgroundColor: '#666666',
+      padding: { x: 15, y: 8 },
+      align: 'center'
+    }).setOrigin(0.5).setInteractive();
+
+    menuButton.on('pointerdown', () => {
+      this.scene.stop('Game');
+      this.scene.stop('Preloader');
+      this.scene.start('MainMenu');
+    });
+
+    menuButton.on('pointerover', () => {
+      menuButton.setBackgroundColor('#888888');
+    });
+
+    menuButton.on('pointerout', () => {
+      menuButton.setBackgroundColor('#666666');
     });
   }
 }
