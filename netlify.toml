@@ -3,6 +3,20 @@
   command = "corepack enable && corepack prepare pnpm@9.0.0 --activate && pnpm install && pnpm run build"
   functions = "netlify/functions"
 
+[functions]
+external_node_modules = [
+  "mongodb",
+  "bson",
+  "@mongodb-js/saslprep",
+  "@mongodb-js/zstd",
+  "kerberos",
+  "memory-pager",
+  "mongodb-connection-string-url",
+  "sparse-bitfield",
+  "whatwg-url",
+  "tr46"
+]
+
 [build.environment]
   NODE_VERSION = "20"
 
