@@ -92,7 +92,13 @@ export class Tower {
       onComplete: () => {
         projectile.destroy();
         if (target && target.active) {
+          const wasAlive = target.currentHealth > 0;
           target.takeDamage(TD_CONFIG.TOWER.DAMAGE);
+
+          // If enemy died from this damage, give gold reward
+          if (wasAlive && !target.active) {
+            this.scene.events.emit('enemy-killed', target.reward);
+          }
         }
       }
     });

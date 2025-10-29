@@ -11,6 +11,11 @@ export class TowerManager {
   create(): void {
     // Initialize with starting gold
     this.gold = TD_CONFIG.GAME.STARTING_GOLD;
+
+    // Listen for enemy killed events to give gold rewards
+    this.scene.events.on('enemy-killed', (reward: number) => {
+      this.addGold(reward);
+    });
   }
 
   canPlaceTower(x: number, y: number, pathRenderer: any): boolean {

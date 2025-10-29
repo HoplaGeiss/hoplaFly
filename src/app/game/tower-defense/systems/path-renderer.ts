@@ -1,32 +1,56 @@
 import * as Phaser from 'phaser';
-import { TD_CONFIG } from '../config/td-config';
+import { TD_CONFIG, getResponsivePath, getResponsivePathWidth } from '../config/td-config';
 
 export class PathRenderer {
   private pathGraphics!: Phaser.GameObjects.Graphics;
   private path: any[] = [];
+  private pathWidth: number = TD_CONFIG.PATH.WIDTH;
 
   constructor(private scene: Phaser.Scene) {
-    this.path = TD_CONFIG.PATH.POINTS;
+    // Initialize with responsive path based on current screen size
+    this.updatePathForScreenSize();
   }
 
   create(): void {
     this.pathGraphics = this.scene.add.graphics();
     this.pathGraphics.fillStyle(0x666666);
 
-    // Draw continuous path using thick line segments
-    for (let i = 0; i < this.path.length - 1; i++) {
-      const start = this.path[i];
-      const end = this.path[i + 1];
+    this.drawPath();
+    this.pathGraphics.setDepth(1);
+  }
 
-      // Draw thick line segment
-      this.pathGraphics.lineStyle(TD_CONFIG.PATH.WIDTH, 0x666666);
-      this.pathGraphics.beginPath();
-      this.pathGraphics.moveTo(start.x, start.y);
-      this.pathGraphics.lineTo(end.x, end.y);
-      this.pathGraphics.strokePath();
+  private drawPath(): void {
+    this.pathGraphics.clear();
+
+    if (this.path.length < 2) return;
+
+    // Draw continuous path with smooth corners
+    this.pathGraphics.lineStyle(this.pathWidth, 0x666666);
+    this.pathGraphics.beginPath();
+
+    // Start at first point
+    this.pathGraphics.moveTo(this.path[0].x, this.path[0].y);
+
+    // Draw lines to all subsequent points
+    for (let i = 1; i < this.path.length; i++) {
+      this.pathGraphics.lineTo(this.path[i].x, this.path[i].y);
     }
 
-    this.pathGraphics.setDepth(1);
+    // Stroke the entire path at once for smooth connections
+    this.pathGraphics.strokePath();
+  }
+
+  updatePathForScreenSize(): void {
+    const width = this.scene.scale.width;
+    const height = this.scene.scale.height;
+
+    this.path = getResponsivePath(width, height);
+    this.pathWidth = getResponsivePathWidth(width);
+
+    // Redraw path if graphics already created
+    if (this.pathGraphics) {
+      this.drawPath();
+    }
   }
 
   isOnPath(x: number, y: number): boolean {
@@ -38,7 +62,7 @@ export class PathRenderer {
       // Calculate distance from point to line segment
       const distanceToLine = this.distanceToLineSegment(x, y, start.x, start.y, end.x, end.y);
 
-      if (distanceToLine < TD_CONFIG.PATH.WIDTH / 2) {
+      if (distanceToLine < this.pathWidth / 2) {
         return true;
       }
     }

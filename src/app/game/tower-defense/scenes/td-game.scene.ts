@@ -6,6 +6,7 @@ import { GridSystem } from '../systems/grid-system';
 import { TowerManager } from '../systems/tower-manager';
 import { EnemyManager } from '../systems/enemy-manager';
 import { WaveController } from '../systems/wave-controller';
+import { CameraController } from '../systems/camera-controller';
 
 export class TDGame extends Phaser.Scene {
   private userService!: UserService;
@@ -16,6 +17,7 @@ export class TDGame extends Phaser.Scene {
   private towerManager!: TowerManager;
   private enemyManager!: EnemyManager;
   private waveController!: WaveController;
+  private cameraController!: CameraController;
 
   constructor() {
     super('TDGame');
@@ -25,8 +27,8 @@ export class TDGame extends Phaser.Scene {
     // Get UserService from the game registry
     this.userService = this.registry.get('userService');
 
-    // Set background
-    this.cameras.main.setBackgroundColor(0x228B22);
+    // Set background - neutral gray for better mobile UX
+    this.cameras.main.setBackgroundColor(0x2c3e50);
 
     // Initialize systems
     this.pathRenderer = new PathRenderer(this);
@@ -34,6 +36,7 @@ export class TDGame extends Phaser.Scene {
     this.towerManager = new TowerManager(this);
     this.enemyManager = new EnemyManager(this);
     this.waveController = new WaveController(this);
+    this.cameraController = new CameraController(this);
 
     // Create all systems
     this.pathRenderer.create();
@@ -41,6 +44,7 @@ export class TDGame extends Phaser.Scene {
     this.towerManager.create();
     this.enemyManager.create();
     this.waveController.create();
+    this.cameraController.create();
 
     // Set up input
     this.setupInput();
@@ -53,14 +57,18 @@ export class TDGame extends Phaser.Scene {
   }
 
   private setupInput(): void {
-    // Grid click for tower placement
+    // Grid click for tower placement - only if not panning
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
-      this.handleGridClick(pointer.x, pointer.y);
+      if (this.cameraController.shouldProcessGameInput(pointer)) {
+        this.handleGridClick(pointer.x, pointer.y);
+      }
     });
 
-    // Grid hover for preview
+    // Grid hover for preview - only if not panning
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
-      this.handleGridHover(pointer.x, pointer.y);
+      if (!this.cameraController.isCurrentlyPanning()) {
+        this.handleGridHover(pointer.x, pointer.y);
+      }
     });
 
     // ESC key to quit to menu
@@ -74,11 +82,18 @@ export class TDGame extends Phaser.Scene {
     this.events.on('start-wave', () => {
       this.waveController.startWave();
     });
+
+    // Forward gold and lives updates to UI scene
+    this.events.on('gold-update', (gold: number) => {
+      this.scene.get('TDUI')?.events.emit('gold-update', gold);
+    });
+
+    this.events.on('lives-update', (lives: number) => {
+      this.scene.get('TDUI')?.events.emit('lives-update', lives);
+    });
   }
 
   private handleGridClick(x: number, y: number): void {
-    if (this.waveController.isWaveActive()) return;
-
     const cell = this.gridSystem.getGridCell(x, y);
     if (!cell) return;
 
@@ -89,8 +104,6 @@ export class TDGame extends Phaser.Scene {
   }
 
   private handleGridHover(x: number, y: number): void {
-    if (this.waveController.isWaveActive()) return;
-
     const cell = this.gridSystem.getGridCell(x, y);
     this.gridSystem.setHoveredCell(cell);
     this.updateGridPreview();
@@ -116,6 +129,7 @@ export class TDGame extends Phaser.Scene {
 
   override update(): void {
     // Update systems
+    this.cameraController.update();
     this.waveController.update(this.enemyManager);
     this.enemyManager.update();
     this.towerManager.update(this.enemyManager.getEnemies());

@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { TD_CONFIG } from '../config/td-config';
+import { TD_CONFIG, getResponsivePath } from '../config/td-config';
 import { Enemy } from '../entities/enemy';
 
 export class EnemyManager {
@@ -8,12 +8,19 @@ export class EnemyManager {
   private path: any[] = [];
 
   constructor(private scene: Phaser.Scene) {
-    this.path = TD_CONFIG.PATH.POINTS;
+    this.updatePathForScreenSize();
   }
 
   create(): void {
     this.lives = TD_CONFIG.GAME.STARTING_LIVES;
     this.scene.events.emit('lives-update', this.lives);
+    this.updatePathForScreenSize();
+  }
+
+  private updatePathForScreenSize(): void {
+    const width = this.scene.scale.width;
+    const height = this.scene.scale.height;
+    this.path = getResponsivePath(width, height);
   }
 
   spawnEnemy(): void {
