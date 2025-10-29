@@ -7,6 +7,8 @@ export class WaveController {
   private enemiesToSpawn: number = 0;
   private lastSpawnTime: number = 0;
   private spawnDelay: number = 300; // faster enemy spawning
+  private currentWave: number = 1;
+  private totalWaves: number = TD_CONFIG.WAVES.TOTAL_WAVES;
 
   constructor(private scene: Phaser.Scene) {}
 
@@ -14,13 +16,16 @@ export class WaveController {
     this.waveActive = false;
     this.enemiesSpawned = 0;
     this.enemiesToSpawn = 0;
+    this.currentWave = 1;
+    this.emitWaveUpdate();
   }
 
   startWave(): void {
     if (this.waveActive) return;
 
+    const waveConfig = this.getCurrentWaveConfig();
     this.waveActive = true;
-    this.enemiesToSpawn = TD_CONFIG.GAME.WAVE_SIZE;
+    this.enemiesToSpawn = waveConfig.enemies;
     this.enemiesSpawned = 0;
     this.lastSpawnTime = 0;
 
@@ -31,7 +36,8 @@ export class WaveController {
     // Spawn enemies
     if (this.waveActive && this.enemiesSpawned < this.enemiesToSpawn) {
       if (Date.now() - this.lastSpawnTime >= this.spawnDelay) {
-        enemyManager.spawnEnemy();
+        const waveConfig = this.getCurrentWaveConfig();
+        enemyManager.spawnEnemy(waveConfig.health, waveConfig.speed);
         this.enemiesSpawned++;
         this.lastSpawnTime = Date.now();
       }
@@ -49,7 +55,15 @@ export class WaveController {
       this.waveActive = false;
       this.enemiesSpawned = 0;
       this.enemiesToSpawn = 0;
-      this.scene.events.emit('wave-complete');
+
+      // Check if all waves completed
+      if (this.currentWave >= this.totalWaves) {
+        this.scene.events.emit('game-victory');
+      } else {
+        this.currentWave++;
+        this.emitWaveUpdate();
+        this.scene.events.emit('wave-complete');
+      }
     }
   }
 
@@ -61,5 +75,23 @@ export class WaveController {
     this.waveActive = false;
     this.enemiesSpawned = 0;
     this.enemiesToSpawn = 0;
+    this.currentWave = 1;
+    this.emitWaveUpdate();
+  }
+
+  getCurrentWaveConfig(): any {
+    return TD_CONFIG.WAVES.WAVE_CONFIGS[this.currentWave - 1];
+  }
+
+  getCurrentWave(): number {
+    return this.currentWave;
+  }
+
+  getTotalWaves(): number {
+    return this.totalWaves;
+  }
+
+  private emitWaveUpdate(): void {
+    this.scene.events.emit('wave-number-update', this.currentWave, this.totalWaves);
   }
 }

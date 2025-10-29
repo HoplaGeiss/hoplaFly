@@ -14,13 +14,13 @@ export class Enemy {
   public active: boolean = true;
   public reward: number;
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, customHealth?: number, customSpeed?: number) {
     this.scene = scene;
     this.x = x;
     this.y = y;
-    this.maxHealth = TD_CONFIG.ENEMY.HEALTH;
+    this.maxHealth = customHealth || TD_CONFIG.ENEMY.HEALTH;
     this.currentHealth = this.maxHealth;
-    this.speed = TD_CONFIG.ENEMY.SPEED;
+    this.speed = customSpeed || TD_CONFIG.ENEMY.SPEED;
     this.reward = TD_CONFIG.ENEMY.REWARD;
     this.createSprite();
     this.createHealthBar();

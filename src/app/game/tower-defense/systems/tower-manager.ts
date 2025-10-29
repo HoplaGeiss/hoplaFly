@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import { TD_CONFIG } from '../config/td-config';
-import { Tower } from '../entities/tower';
+import { Tower, TowerType } from '../entities/tower';
 
 export class TowerManager {
   private towers: Tower[] = [];
@@ -18,29 +18,32 @@ export class TowerManager {
     });
   }
 
-  canPlaceTower(x: number, y: number, pathRenderer: any): boolean {
+  canPlaceTower(x: number, y: number, pathRenderer: any, towerType: TowerType = 'QUICK_FIRE'): boolean {
     // Check if position is on path
     if (pathRenderer.isOnPath(x, y)) {
       return false;
     }
 
     // Check if position is already occupied
+    const towerConfig = TD_CONFIG.TOWER_TYPES[towerType];
     for (const tower of this.towers) {
-      if (Phaser.Math.Distance.Between(x, y, tower.x, tower.y) < TD_CONFIG.TOWER.SIZE) {
+      if (Phaser.Math.Distance.Between(x, y, tower.x, tower.y) < towerConfig.size) {
         return false;
       }
     }
 
     // Check if player has enough gold
-    return this.gold >= TD_CONFIG.TOWER.COST;
+    return this.gold >= towerConfig.cost;
   }
 
-  placeTower(x: number, y: number, pathRenderer: any): boolean {
-    if (!this.canPlaceTower(x, y, pathRenderer)) return false;
+  placeTower(x: number, y: number, pathRenderer: any, towerType: TowerType = 'QUICK_FIRE'): boolean {
+    if (!this.canPlaceTower(x, y, pathRenderer, towerType)) return false;
 
-    const tower = new Tower(this.scene, x, y);
+    const tower = new Tower(this.scene, x, y, towerType);
     this.towers.push(tower);
-    this.gold -= TD_CONFIG.TOWER.COST;
+
+    const towerConfig = TD_CONFIG.TOWER_TYPES[towerType];
+    this.gold -= towerConfig.cost;
 
     // Emit gold update event
     this.scene.events.emit('gold-update', this.gold);

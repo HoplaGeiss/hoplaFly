@@ -7,6 +7,8 @@ import { TowerManager } from '../systems/tower-manager';
 import { EnemyManager } from '../systems/enemy-manager';
 import { WaveController } from '../systems/wave-controller';
 import { CameraController } from '../systems/camera-controller';
+import { TowerSelectionMenu } from '../systems/tower-selection-menu';
+import { TowerType } from '../entities/tower';
 
 export class TDGame extends Phaser.Scene {
   private userService!: UserService;
@@ -18,6 +20,10 @@ export class TDGame extends Phaser.Scene {
   private enemyManager!: EnemyManager;
   private waveController!: WaveController;
   private cameraController!: CameraController;
+  private towerSelectionMenu!: TowerSelectionMenu;
+
+  // Tower placement state
+  private pendingTowerPlacement: { x: number; y: number } | null = null;
 
   constructor() {
     super('TDGame');
@@ -37,6 +43,7 @@ export class TDGame extends Phaser.Scene {
     this.enemyManager = new EnemyManager(this);
     this.waveController = new WaveController(this);
     this.cameraController = new CameraController(this);
+    this.towerSelectionMenu = new TowerSelectionMenu(this);
 
     // Create all systems
     this.pathRenderer.create();
@@ -45,6 +52,7 @@ export class TDGame extends Phaser.Scene {
     this.enemyManager.create();
     this.waveController.create();
     this.cameraController.create();
+    this.towerSelectionMenu.create();
 
     // Set up input
     this.setupInput();
@@ -91,21 +99,71 @@ export class TDGame extends Phaser.Scene {
     this.events.on('lives-update', (lives: number) => {
       this.scene.get('TDUI')?.events.emit('lives-update', lives);
     });
+
+    this.events.on('wave-number-update', (currentWave: number, totalWaves: number) => {
+      this.scene.get('TDUI')?.events.emit('wave-number-update', currentWave, totalWaves);
+    });
+
+    this.events.on('game-victory', () => {
+      this.scene.stop('TDGame');
+      this.scene.stop('TDPreloader');
+      this.scene.stop('TDUI');
+      this.scene.start('TDWin');
+    });
   }
 
   private handleGridClick(x: number, y: number): void {
     const cell = this.gridSystem.getGridCell(x, y);
     if (!cell) return;
 
-    if (this.towerManager.placeTower(cell.x, cell.y, this.pathRenderer)) {
-      // Tower placed successfully
-      this.updateGridPreview();
+    // Check if grid cell is on path using grid-based path checking
+    if (this.pathRenderer.isGridCellOnPath(cell.x, cell.y)) {
+      return; // Can't place on path cells
     }
+
+    // Check if position is already occupied by another tower
+    const towers = this.towerManager.getTowers();
+    for (const tower of towers) {
+      if (Phaser.Math.Distance.Between(cell.x, cell.y, tower.x, tower.y) < TD_CONFIG.GRID.CELL_SIZE) {
+        return; // Position occupied
+      }
+    }
+
+    // Mark the area as selected and show tower selection menu
+    this.gridSystem.setSelectedCell(cell);
+    this.pendingTowerPlacement = { x: cell.x, y: cell.y };
+    this.towerSelectionMenu.show(
+      x,
+      y,
+      (towerType: TowerType) => this.onTowerSelected(towerType),
+      () => this.onTowerMenuClosed(),
+      this.towerManager.getGold()
+    );
+    this.updateGridPreview();
   }
 
   private handleGridHover(x: number, y: number): void {
     const cell = this.gridSystem.getGridCell(x, y);
     this.gridSystem.setHoveredCell(cell);
+    this.updateGridPreview();
+  }
+
+  private onTowerSelected(towerType: TowerType): void {
+    if (!this.pendingTowerPlacement) return;
+
+    const { x, y } = this.pendingTowerPlacement;
+    if (this.towerManager.placeTower(x, y, this.pathRenderer, towerType)) {
+      // Tower placed successfully - clear selection
+      this.gridSystem.setSelectedCell(null);
+      this.pendingTowerPlacement = null;
+      this.updateGridPreview();
+    }
+  }
+
+  private onTowerMenuClosed(): void {
+    // Clear selection when menu is closed without placing tower
+    this.gridSystem.setSelectedCell(null);
+    this.pendingTowerPlacement = null;
     this.updateGridPreview();
   }
 
@@ -116,7 +174,13 @@ export class TDGame extends Phaser.Scene {
       return;
     }
 
-    const canPlace = this.towerManager.canPlaceTower(hoveredCell.x, hoveredCell.y, this.pathRenderer);
+    // Check if the grid cell is valid for tower placement
+    const isOnPath = this.pathRenderer.isGridCellOnPath(hoveredCell.x, hoveredCell.y);
+    const isOccupied = this.towerManager.getTowers().some(tower =>
+      Phaser.Math.Distance.Between(hoveredCell.x, hoveredCell.y, tower.x, tower.y) < TD_CONFIG.GRID.CELL_SIZE
+    );
+
+    const canPlace = !isOnPath && !isOccupied;
     this.gridSystem.updateGridPreview(canPlace);
   }
 

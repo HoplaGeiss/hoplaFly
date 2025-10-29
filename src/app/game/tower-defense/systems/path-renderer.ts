@@ -54,15 +54,43 @@ export class PathRenderer {
   }
 
   isOnPath(x: number, y: number): boolean {
-    // Check if position is on path using line-to-point distance
+    // Check if a grid cell center is on the path
+    // Use path width to determine if the cell overlaps with the path
+    const cellSize = TD_CONFIG.GRID.CELL_SIZE;
+    const minDistance = this.pathWidth / 2;
+
     for (let i = 0; i < this.path.length - 1; i++) {
       const start = this.path[i];
       const end = this.path[i + 1];
 
-      // Calculate distance from point to line segment
+      // Calculate distance from cell center to line segment
       const distanceToLine = this.distanceToLineSegment(x, y, start.x, start.y, end.x, end.y);
 
-      if (distanceToLine < this.pathWidth / 2) {
+      if (distanceToLine < minDistance) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  isGridCellOnPath(cellX: number, cellY: number): boolean {
+    // Check if a grid cell overlaps with the path
+    // Allow towers to be placed close to path but prevent visual overlap
+    const cellSize = TD_CONFIG.GRID.CELL_SIZE;
+    const halfCell = cellSize / 2;
+
+    for (let i = 0; i < this.path.length - 1; i++) {
+      const start = this.path[i];
+      const end = this.path[i + 1];
+
+      // Check distance from cell center to path line
+      const distanceToLine = this.distanceToLineSegment(cellX, cellY, start.x, start.y, end.x, end.y);
+
+      // Cell is on path if it overlaps with the path width
+      // Use path width + small buffer to prevent visual overlap
+      const minDistance = (this.pathWidth / 2) + 5; // Small 5px buffer
+
+      if (distanceToLine < minDistance) {
         return true;
       }
     }

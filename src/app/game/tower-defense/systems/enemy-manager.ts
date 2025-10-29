@@ -23,9 +23,9 @@ export class EnemyManager {
     this.path = getResponsivePath(width, height);
   }
 
-  spawnEnemy(): void {
+  spawnEnemy(customHealth?: number, customSpeed?: number): void {
     const startPoint = this.path[0];
-    const enemy = new Enemy(this.scene, startPoint.x, startPoint.y);
+    const enemy = new Enemy(this.scene, startPoint.x, startPoint.y, customHealth, customSpeed);
     this.enemies.push(enemy);
   }
 

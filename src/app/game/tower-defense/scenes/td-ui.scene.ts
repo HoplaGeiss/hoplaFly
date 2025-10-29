@@ -3,6 +3,7 @@ import { UserService } from '../../../services/user.service';
 
 export class TDUI extends Phaser.Scene {
   private userService!: UserService;
+  private waveText!: Phaser.GameObjects.Text;
   private livesText!: Phaser.GameObjects.Text;
   private goldText!: Phaser.GameObjects.Text;
   private balanceText!: Phaser.GameObjects.Text;
@@ -12,6 +13,8 @@ export class TDUI extends Phaser.Scene {
   private isMenuOpen: boolean = false;
   private lives: number = 10; // Initialize with starting lives
   private gold: number = 50; // Initialize with starting gold
+  private currentWave: number = 1;
+  private totalWaves: number = 5;
 
   constructor() {
     super('TDUI');
@@ -29,8 +32,17 @@ export class TDUI extends Phaser.Scene {
   }
 
   private createUI(): void {
-    // Compact Lives & Gold display (top right)
-    this.livesText = this.add.text(this.scale.width - 30, 20, `❤️${this.lives}`, {
+    // Wave counter (top right, above lives)
+    this.waveText = this.add.text(this.scale.width - 30, 20, `🌊${this.currentWave}/${this.totalWaves}`, {
+      fontFamily: 'Arial',
+      fontSize: 18,
+      color: '#00bfff',
+      stroke: '#000000',
+      strokeThickness: 2
+    }).setDepth(20).setOrigin(1, 0);
+
+    // Lives display (below wave)
+    this.livesText = this.add.text(this.scale.width - 30, 45, `❤️${this.lives}`, {
       fontFamily: 'Arial',
       fontSize: 18,
       color: '#ffffff',
@@ -38,7 +50,8 @@ export class TDUI extends Phaser.Scene {
       strokeThickness: 2
     }).setDepth(20).setOrigin(1, 0);
 
-    this.goldText = this.add.text(this.scale.width - 30, 45, `💰${this.gold}`, {
+    // Gold display (below lives)
+    this.goldText = this.add.text(this.scale.width - 30, 70, `💰${this.gold}`, {
       fontFamily: 'Arial',
       fontSize: 18,
       color: '#FFD700',
@@ -49,7 +62,7 @@ export class TDUI extends Phaser.Scene {
     // Hide hoplaTokens for mobile
     // this.balanceText is not created for mobile
 
-    // Start Wave button (middle top)
+    // Start Wave button (center top)
     this.startWaveButton = this.add.text(this.scale.width / 2, 20, 'Start Wave', {
       fontFamily: 'Arial',
       fontSize: 28,
@@ -222,6 +235,10 @@ export class TDUI extends Phaser.Scene {
     this.events.on('reset-game', () => {
       this.resetUI();
     });
+
+    this.events.on('wave-number-update', (currentWave: number, totalWaves: number) => {
+      this.updateWaveDisplay(currentWave, totalWaves);
+    });
   }
 
   private updateLives(lives: number): void {
@@ -232,6 +249,12 @@ export class TDUI extends Phaser.Scene {
   private updateGold(gold: number): void {
     this.gold = gold;
     this.goldText.setText(`💰${this.gold}`);
+  }
+
+  private updateWaveDisplay(currentWave: number, totalWaves: number): void {
+    this.currentWave = currentWave;
+    this.totalWaves = totalWaves;
+    this.waveText.setText(`🌊${this.currentWave}/${this.totalWaves}`);
   }
 
   private updateBalance(): void {
@@ -256,6 +279,9 @@ export class TDUI extends Phaser.Scene {
   private resetUI(): void {
     this.lives = 10; // Reset to starting lives
     this.gold = 50; // Reset to starting gold
+    this.currentWave = 1;
+    this.totalWaves = 5;
+    this.waveText.setText('🌊1/5');
     this.livesText.setText('❤️10');
     this.goldText.setText('💰50');
     this.showStartWaveButton();
@@ -270,11 +296,14 @@ export class TDUI extends Phaser.Scene {
 
   private handleResize(gameSize: Phaser.Structs.Size): void {
     // Update UI elements positions for mobile layout
+    if (this.waveText) {
+      this.waveText.setPosition(gameSize.width - 30, 20);
+    }
     if (this.livesText) {
-      this.livesText.setPosition(gameSize.width - 30, 20);
+      this.livesText.setPosition(gameSize.width - 30, 45);
     }
     if (this.goldText) {
-      this.goldText.setPosition(gameSize.width - 30, 45);
+      this.goldText.setPosition(gameSize.width - 30, 70);
     }
     if (this.startWaveButton) {
       this.startWaveButton.setPosition(gameSize.width / 2, 20);
