@@ -13,6 +13,6 @@ export class Boot extends Phaser.Scene {
   }
 
   create(): void {
-    this.scene.start('MainMenu');
+    this.scene.start('TDPreloader');
   }
 }

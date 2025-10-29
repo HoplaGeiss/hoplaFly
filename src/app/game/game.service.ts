@@ -3,11 +3,13 @@ import * as Phaser from 'phaser';
 import { Boot } from './bat-fly/scenes/boot.scene';
 import { Preloader } from './bat-fly/scenes/preloader.scene';
 import { Game } from './bat-fly/scenes/game.scene';
+import { GameUI } from './bat-fly/scenes/game-ui.scene';
 import { GameOver } from './bat-fly/scenes/game-over.scene';
 import { Win } from './bat-fly/scenes/win.scene';
 import { MainMenu } from './main-menu/main-menu.scene';
 import { TDPreloader } from './tower-defense/scenes/td-preloader.scene';
 import { TDGame } from './tower-defense/scenes/td-game.scene';
+import { TDUI } from './tower-defense/scenes/td-ui.scene';
 import { TDGameOver } from './tower-defense/scenes/td-game-over.scene';
 import { TDWin } from './tower-defense/scenes/td-win.scene';
 import { UserService } from '../services/user.service';
@@ -52,9 +54,9 @@ export class GameService {
       },
       scene: [Boot, MainMenu,
               // Bat Fly scenes
-              Preloader, Game, GameOver, Win,
+              Preloader, Game, GameUI, GameOver, Win,
               // Tower Defense scenes
-              TDPreloader, TDGame, TDGameOver, TDWin
+              TDPreloader, TDGame, TDUI, TDGameOver, TDWin
       ],
     };
 
